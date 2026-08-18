@@ -1,0 +1,55 @@
+[Unit]
+Description=Redlib - Private Reddit Frontend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=redlib
+Group=redlib
+WorkingDirectory=/tmp
+EnvironmentFile=/etc/redlib.env
+ExecStart=/opt/bin/redlib
+Restart=on-failure
+RestartSec=5
+
+# ── Filesystem hardening ──
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadOnlyPaths=/
+
+# ── Privilege hardening ──
+NoNewPrivileges=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+
+# ── Kernel / device isolation ──
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+PrivateDevices=true
+DevicePolicy=closed
+LockPersonality=true
+MemoryDenyWriteExecute=true
+
+# ── Network hardening ──
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=true
+
+# ── Syscall filtering ──
+SystemCallFilter=@system-service
+SystemCallFilter=~@privileged @resources @mount @swap @reboot @raw-io @clock @cpu-emulation @debug @module @obsolete
+SystemCallArchitectures=native
+SystemCallErrorNumber=EPERM
+
+# ── Misc ──
+UMask=0077
+ProtectProc=invisible
+ProcSubset=pid
+
+[Install]
+WantedBy=multi-user.target
