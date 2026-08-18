@@ -450,5 +450,17 @@ pub async fn proxy_instances() -> Result<Response<Body>, String> {
 async fn fetch_instances() -> String {
 	let url = "https://raw.githubusercontent.com/redlib-org/redlib-instances/refs/heads/main/instances.json";
 
-	CLIENT.get(url).send().await.expect("Failed to request GitHub").text().await.expect("Failed to read body")
+	match CLIENT.get(url).send().await {
+		Ok(resp) => match resp.text().await {
+			Ok(body) => body,
+			Err(e) => {
+				log::warn!("Failed to read instances response body: {e}");
+				"[]".to_string()
+			}
+		},
+		Err(e) => {
+			log::warn!("Failed to fetch instances from GitHub: {e}");
+			"[]".to_string()
+		}
+	}
 }
