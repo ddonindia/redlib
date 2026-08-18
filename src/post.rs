@@ -229,8 +229,8 @@ fn build_comment(
 	Comment {
 		id,
 		kind,
-		parent_id: parent_info[1].to_string(),
-		parent_kind: parent_info[0].to_string(),
+		parent_id: parent_info.get(1).unwrap_or(&"").to_string(),
+		parent_kind: parent_info.get(0).unwrap_or(&"").to_string(),
 		post_link: post_link.to_string(),
 		post_author: post_author.to_string(),
 		body,
